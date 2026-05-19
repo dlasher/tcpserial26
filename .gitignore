@@ -9,5 +9,8 @@
 .DS_Store
 Thumbs.db
 
+# Docs (design docs, plans, spec artifacts)
+/docs/
+
 # Config
 tcpserial.yaml
