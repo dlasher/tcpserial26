@@ -1,10 +1,9 @@
 # Binaries
-tcpserial
+/tcpserial
 
 # IDE
 .vscode/
 .idea/
-AGENTS.md
 
 # OS
 .DS_Store
