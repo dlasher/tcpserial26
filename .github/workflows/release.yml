@@ -5,13 +5,15 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build ${{ matrix.arch }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        goos: [linux]
         goarch: [386, amd64, arm, arm64]
         include:
           - goarch: arm
@@ -28,19 +30,33 @@ jobs:
       - name: Build
         run: |
           mkdir -p dist
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} GOARM=${{ matrix.goarm }} \
+          GOOS=linux GOARCH=${{ matrix.goarch }} GOARM=${{ matrix.goarm }} \
           CGO_ENABLED=0 \
           go build -ldflags "-X main.version=${GITHUB_REF_NAME#v} -X main.commit=${{ github.sha }} -X main.date=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-          -o dist/tcpserial_${GITHUB_REF_NAME}_${{ matrix.goos }}_${{ matrix.goarch }} ./cmd/tcpserial
+          -o dist/tcpserial_${GITHUB_REF_NAME}_linux_${{ matrix.goarch }} ./cmd/tcpserial
 
       - name: Archive
         run: |
           cd dist
-          tar czf tcpserial_${GITHUB_REF_NAME}_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz \
-            tcpserial_${GITHUB_REF_NAME}_${{ matrix.goos }}_${{ matrix.goarch }}
+          tar czf tcpserial_${GITHUB_REF_NAME}_linux_${{ matrix.goarch }}.tar.gz \
+            tcpserial_${GITHUB_REF_NAME}_linux_${{ matrix.goarch }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tcpserial_linux_${{ matrix.goarch }}
+          path: dist/*.tar.gz
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+          path: dist
 
       - uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: dist/*.tar.gz
           generate_release_notes: true
