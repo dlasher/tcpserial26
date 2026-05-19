@@ -1,0 +1,14 @@
+# Binaries
+tcpserial
+
+# IDE
+.vscode/
+.idea/
+AGENTS.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Config
+tcpserial.yaml

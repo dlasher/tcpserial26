@@ -1,0 +1,12 @@
+[Unit]
+Description=TCP Serial Bridge Service
+After=network.target
+Requires=tcpserial.socket
+
+[Service]
+Type=notify
+ExecStart=/usr/local/bin/tcpserial
+TimeoutStopSec=5
+
+[Install]
+WantedBy=multi-user.target

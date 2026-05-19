@@ -1,0 +1,37 @@
+[Unit]
+Description=TCP Serial Bridge Service (Hardened)
+After=network.target
+Requires=tcpserial.socket
+ConditionPathExists=/dev/ttyUSB0
+
+[Service]
+Type=notify
+ExecStart=/usr/local/bin/tcpserial
+TimeoutStopSec=5
+
+# Security hardening directives
+User=serial
+Group=dialout
+NoNewPrivileges=true
+SystemCallFilter=~@privileged @reboot @cpu-emulation @debug @obsolete
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=false
+PrivateUsers=true
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RemoveIPC=true
+CapabilityBoundingSet=
+UMask=0077
+ReadWritePaths=/dev/ttyUSB0 /dev/ttyACM0
+
+[Install]
+WantedBy=multi-user.target

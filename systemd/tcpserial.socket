@@ -1,0 +1,12 @@
+[Unit]
+Description=TCP Serial Bridge Socket
+PartOf=tcpserial.service
+
+[Socket]
+ListenStream=2000
+ReusePort=true
+BindToDevice=
+Accept=false
+
+[Install]
+WantedBy=sockets.target
